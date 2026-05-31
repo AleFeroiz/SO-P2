@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitor-linux
+  labels:
+    app: monitor-linux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitor-linux
+  template:
+    metadata:
+      labels:
+        app: monitor-linux
+    spec:
+      containers:
+        - name: monitor-linux
+          image: monitor-linux:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: LOG_DIR
+              value: "/app/logs"
+            - name: RAM_THRESHOLD
+              value: "80"
+            - name: MONITOR_INTERVAL
+              value: "10"
+          # Health check — Kubernetes reinicia o container se falhar
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10

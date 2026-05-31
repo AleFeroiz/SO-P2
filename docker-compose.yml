@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  monitor:
+    build: .
+    container_name: monitor-linux
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - LOG_DIR=/app/logs
+      - RAM_THRESHOLD=80
+      - MONITOR_INTERVAL=10
+    volumes:
+      - ./logs:/app/logs   # monta logs na máquina local também
+    restart: unless-stopped

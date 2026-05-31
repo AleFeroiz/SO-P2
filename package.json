@@ -1,0 +1,14 @@
+{
+  "name": "monitor-linux",
+  "version": "1.0.0",
+  "description": "Sistema de Monitoramento Linux com API REST e Dashboard Web",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "test": "node tests/app.test.js"
+  },
+  "keywords": ["devops", "linux", "monitoramento", "docker", "kubernetes"],
+  "author": "Projeto Integrador DevOps",
+  "license": "MIT"
+}
