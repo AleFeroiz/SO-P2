@@ -1,224 +1,365 @@
-# 🖥️ Monitor Linux
+# Monitor Linux — Dashboard de Métricas em Tempo Real
 
-Sistema de monitoramento de recursos do servidor em tempo real, desenvolvido como Projeto Integrador das disciplinas de **DevOps** e **Sistemas Operacionais**.
+Projeto Integrador de DevOps e Sistemas Operacionais com uma API REST em Node.js/Express e um dashboard HTML/CSS/JS que exibe métricas reais do sistema Linux, com evidências práticas de Git Flow, automação Linux, Shell Script, Docker, Kubernetes, CI/CD e testes automatizados.
 
----
+> O dashboard consome a API local para exibir dados reais coletados diretamente do sistema operacional via comandos Linux (`top`, `free`, `df`, `ps`).
 
-## 🎯 Objetivo
+## Objetivo
 
-Demonstrar na prática a integração entre desenvolvimento de software, infraestrutura Linux e cultura DevOps — automatizando a coleta de métricas do sistema operacional e expondo-as em um dashboard web acessível via navegador.
+Demonstrar, em um projeto acadêmico, como uma aplicação de monitoramento pode ser organizada com práticas de DevOps e conceitos de Sistemas Operacionais Linux. O foco do trabalho não é apenas a interface, mas o ecossistema ao redor dela: automação com shell script, containerização, orquestração, pipeline de CI/CD, testes, logs e documentação.
 
----
+## Contexto Acadêmico
 
-## 🛠️ Tecnologias Utilizadas
+Este projeto atende aos critérios de avaliação das disciplinas de DevOps e Sistemas Operacionais:
 
-| Tecnologia | Uso |
-|---|---|
-| Node.js + Express | Backend / API REST |
-| HTML + CSS + JavaScript | Dashboard frontend |
-| Shell Script (sh) | Automação e coleta de logs |
-| Docker | Containerização da aplicação |
-| Kubernetes | Orquestração e deploy |
-| GitHub Actions | Pipeline CI/CD |
-| Jest + Supertest | Testes automatizados |
+- Git e Git Flow
+- Conceitos de Linux e comandos GNU
+- Automação com Shell Script
+- Docker
+- Kubernetes
+- CI/CD com GitHub Actions
+- Testes automatizados (unitários e de integração)
+- Logs e monitoramento
+- Gerenciamento de configuração
+- Documentação e prontidão para apresentação
 
----
+## Tecnologias
 
-## 📁 Estrutura do Projeto
+| Área | Tecnologias |
+| --- | --- |
+| Backend | Node.js, Express |
+| Frontend | HTML, CSS, JavaScript (vanilla) |
+| Testes | Jest, Supertest |
+| CI/CD | GitHub Actions |
+| Linux | Bash, `top`, `free`, `df`, `ps`, `uptime` |
+| Containers | Docker, Node Alpine |
+| Kubernetes | Deployment, Service |
+| Configuração | `.env`, variáveis de ambiente |
 
-```
-projeto-monitor/
-│
-├── src/                        # Código-fonte do backend
-│   ├── index.js                # Servidor Express e definição das rotas da API
-│   └── systemMetrics.js        # Coleta de métricas do sistema via comandos Linux
-│
-├── public/                     # Frontend estático servido pelo Express
-│   ├── index.html              # Estrutura do dashboard
-│   ├── style.css               # Estilização da interface
-│   └── app.js                  # Atualização das métricas em tempo real (fetch)
-│
-├── scripts/
-│   └── monitoramento.sh        # Script Shell de coleta contínua e geração de logs
-│
-├── tests/                      # Testes automatizados
-│   ├── api.test.js             # Testes de integração das rotas HTTP
-│   └── systemMetrics.test.js   # Testes unitários das funções de métricas
-│
-├── k8s/                        # Manifests Kubernetes
-│   ├── deployment.yaml         # Configuração do Deployment (réplicas, probes, env)
-│   └── service.yaml            # Exposição do serviço na rede
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # Pipeline CI/CD com GitHub Actions
-│
-├── Dockerfile                  # Imagem Docker da aplicação
-├── .env                        # Variáveis de ambiente (não versionado)
-├── .dockerignore               # Arquivos ignorados no build Docker
-├── .gitignore                  # Arquivos ignorados pelo Git
-└── package.json                # Dependências e scripts do projeto
+## Arquitetura
+
+```text
+Usuario
+  |
+  v
+Dashboard HTML/CSS/JS (public/)
+  |
+  v (fetch /api/metricas)
+API Express (src/index.js)
+  |
+  v
+systemMetrics.js — execSync com comandos Linux
+  |
+  v
+Sistema Operacional (CPU, RAM, Disco, Processos)
 ```
 
----
+O backend coleta métricas reais do sistema operacional executando comandos Linux via `execSync`. O frontend consome a API via `fetch` a cada atualização e exibe os dados em cards com barras de progresso.
 
-## ⚙️ Como Funciona
+## Estrutura
 
-### Backend — API REST
+```text
+.
+|-- .github/workflows/ci.yml
+|-- k8s/
+|   |-- deployment.yaml
+|   `-- service.yaml
+|-- public/
+|   |-- index.html
+|   |-- style.css
+|   `-- app.js
+|-- scripts/
+|   `-- monitoramento.sh
+|-- src/
+|   |-- index.js
+|   `-- systemMetrics.js
+|-- tests/
+|   |-- api.test.js
+|   `-- systemMetrics.test.js
+|-- .dockerignore
+|-- .env
+|-- .gitignore
+|-- Dockerfile
+|-- package.json
+`-- package-lock.json
+```
 
-O servidor Express (`src/index.js`) expõe as seguintes rotas:
+## Git Flow
 
-| Rota | Descrição |
-|---|---|
-| `GET /` | Serve o dashboard web |
-| `GET /health` | Health check da aplicação |
-| `GET /api/metricas` | Retorna todas as métricas juntas |
-| `GET /api/cpu` | Uso atual de CPU |
-| `GET /api/ram` | Uso de memória RAM |
-| `GET /api/disco` | Uso do disco |
+O repositório segue a estratégia Git Flow com branches `main`, `develop` e `feature/*`. A estratégia recomendada para a demonstração é:
 
-### Coleta de Métricas — Sistemas Operacionais Linux
+```bash
+git checkout develop
+git checkout -b feature/nome-da-etapa
+git add .
+git commit -m "feat: descreve a melhoria"
+git push origin feature/nome-da-etapa
+```
 
-O arquivo `src/systemMetrics.js` executa comandos nativos do Linux para coletar os dados em tempo real:
+Pull Requests devem ser abertos para `develop`. O CI está configurado para rodar em `push` e `pull_request` na branch `main`.
 
-| Métrica | Comando Linux utilizado |
-|---|---|
-| CPU | `top -bn1 \| grep 'Cpu(s)'` |
-| RAM | `free -m` |
-| Disco | `df -h /` |
-| Processos ativos | `ps aux --no-headers \| wc -l` |
-| Uptime | `uptime -p` |
+## Ambiente Local
 
-### Frontend — Dashboard
+Instale as dependências:
 
-O dashboard (`public/`) consome a API via `fetch` a cada poucos segundos e atualiza os cartões de CPU, RAM, Disco e Processos com barras de progresso visuais, sem recarregar a página.
+```bash
+npm ci
+```
 
-### Script Shell — Automação e Logs
+Execute em desenvolvimento:
 
-O `scripts/monitoramento.sh` é um script independente que:
-- Coleta as mesmas métricas via comandos Linux
-- Grava registros contínuos em `logs/sistema.log`
-- Emite alertas em `logs/alertas.log` quando a RAM ultrapassa o limite configurado
-- O intervalo de coleta e o limite de RAM são controlados por variáveis de ambiente
+```bash
+npm run dev
+```
 
----
+Validações principais:
 
-## 🔁 Pipeline CI/CD — GitHub Actions
+```bash
+npm test
+npm start
+```
 
-O arquivo `.github/workflows/ci.yml` define dois jobs executados automaticamente a cada `push` ou `pull_request` na branch `main`:
+Acesso:
 
-**Job 1 — Test**
-1. Faz checkout do repositório
-2. Instala o Node.js 20
-3. Instala as dependências (`npm ci`)
-4. Valida a sintaxe do script Shell (`sh -n`)
-5. Executa todos os testes automatizados (`npm test`)
+```text
+http://localhost:3000
+```
 
-**Job 2 — Docker** *(depende do Job 1 passar)*
-1. Faz o build da imagem Docker
-2. Sobe o container e executa um smoke test no `/health`
+## Variáveis de Ambiente
 
----
+O arquivo `.env` configura o comportamento da aplicação e do script de monitoramento:
 
-## 🧪 Testes Automatizados
+```env
+PORT=3000
+RAM_THRESHOLD=80
+MONITOR_INTERVAL=10
+```
 
-Os testes cobrem ~93% do código e estão divididos em:
+- `PORT`: porta em que o servidor Express escuta
+- `RAM_THRESHOLD`: percentual de RAM que dispara alerta no script shell
+- `MONITOR_INTERVAL`: intervalo em segundos entre coletas no script shell
 
-**`tests/api.test.js`** — Testes de integração:
-- Verifica se todas as rotas retornam HTTP 200
-- Valida a estrutura do JSON retornado
-- Garante que os tipos de dados estão corretos
+## Testes Automatizados
 
-**`tests/systemMetrics.test.js`** — Testes unitários:
-- Valida a estrutura retornada por cada função de coleta
-- Verifica se `ram.percent` está entre 0 e 100
-- Verifica se `cpu.value` é um número válido
-- Confirma que o timestamp segue o formato ISO 8601
+O projeto usa Jest com Supertest.
 
-Para rodar os testes:
 ```bash
 npm test
 ```
 
----
+Os testes verificam:
 
-## 🐳 Docker
+**Testes unitários** (`tests/systemMetrics.test.js`):
+- estrutura completa retornada por `collectMetrics()`
+- validade do campo `timestamp` como ISO string
+- campos e tipos de `getCpu()`, `getRam()`, `getDisk()`, `getProcesses()`
+- regras de negócio, como `ram.used` não ultrapassar `ram.total` e `percent` entre 0 e 100
 
-A aplicação é containerizada com uma imagem baseada em `node:20-alpine`. O Dockerfile:
-1. Instala utilitários Linux necessários (`procps`, `coreutils`, `util-linux`)
-2. Copia apenas os arquivos necessários para produção
-3. Expõe a porta 3000
-4. Inicializa o servidor Node.js
+**Testes de integração** (`tests/api.test.js`):
+- `GET /health` retorna status 200 e `{ status: "ok" }`
+- `GET /api/metricas` retorna status 200 com `cpu`, `ram`, `disk` e `processes`
+- `GET /api/cpu`, `GET /api/ram` e `GET /api/disco` retornam status 200 com campo `data`
+- `ram.percent` entre 0 e 100 via endpoint HTTP
+
+Os testes não exigem Docker, Kubernetes ou ambiente Linux específico.
+
+## CI/CD
+
+Workflow: `.github/workflows/ci.yml`
+
+O GitHub Actions executa dois jobs encadeados:
+
+**Job `test`:**
+1. `npm ci`
+2. Validação de sintaxe do shell script (`sh -n`)
+3. `npm test`
+
+**Job `docker`** (depende de `test`):
+1. `docker build -t monitor-linux .`
+2. Smoke test: sobe o container, aguarda 3 segundos e faz `curl -f http://localhost:3000/health`
+
+O pipeline não faz deploy e não envia imagem para registry.
+
+## Linux e Shell Script
+
+O script `scripts/monitoramento.sh` usa `sh` com `set -euo pipefail` implícito e coleta métricas continuamente em loop.
+
+Dar permissão de execução:
 
 ```bash
-# Build
-docker build -t monitor-linux .
-
-# Execução
-docker run -p 3000:3000 monitor-linux
+chmod +x scripts/monitoramento.sh
 ```
 
----
-
-## ☸️ Kubernetes
-
-Os manifests em `k8s/` definem a infraestrutura de orquestração:
-
-**`deployment.yaml`**
-- 1 réplica do container
-- Variáveis de ambiente injetadas via `env`
-- **Liveness Probe**: verifica `/health` a cada 15s para reiniciar o container se travar
-- **Readiness Probe**: verifica `/health` a cada 10s para sinalizar quando o container está pronto para receber tráfego
-
-**`service.yaml`**
-- Expõe o Deployment internamente no cluster
+Validar sintaxe sem executar:
 
 ```bash
-# Aplicar no cluster
+sh -n scripts/monitoramento.sh
+```
+
+Executar monitoramento:
+
+```bash
+./scripts/monitoramento.sh
+```
+
+Executar com variáveis customizadas:
+
+```bash
+RAM_THRESHOLD=70 MONITOR_INTERVAL=5 LOG_DIR=./logs ./scripts/monitoramento.sh
+```
+
+Inspecionar logs gerados:
+
+```bash
+tail -f logs/sistema.log
+tail -f logs/alertas.log
+```
+
+Conceitos demonstrados:
+
+- uso de CPU com `top -bn1`
+- memória com `free -m`
+- disco com `df -h`
+- processos com `ps aux`
+- uptime com `uptime -p`
+- redirecionamento e append para arquivos de log (`>>`)
+- alerta condicional por threshold de RAM
+- agendamento via variável `MONITOR_INTERVAL` com `sleep`
+- criação de diretórios com `mkdir -p`
+
+## Logs
+
+O script de monitoramento grava dois arquivos no diretório `LOG_DIR` (padrão: `./logs`):
+
+- `logs/sistema.log`: coleta periódica de CPU, RAM, disco e processos
+- `logs/alertas.log`: entradas geradas quando a RAM ultrapassa o threshold configurado
+
+Exemplo de entrada no log:
+
+```
+[2025-05-31 23:10:00] ============================================
+[2025-05-31 23:10:00] CPU:        12%
+[2025-05-31 23:10:00] RAM:        512MB / 2048MB (25%)
+[2025-05-31 23:10:00] Disco:      usado 45% | disponível 10G
+[2025-05-31 23:10:00] Processos:  87 ativos
+```
+
+## Docker
+
+O Dockerfile usa uma imagem `node:20-alpine` com ferramentas Linux instaladas via `apk` para que os comandos de coleta de métricas funcionem dentro do container.
+
+Build:
+
+```bash
+docker build -t monitor-linux .
+```
+
+Run:
+
+```bash
+docker run -d -p 3000:3000 --name monitor-linux monitor-linux
+```
+
+Acesso:
+
+```text
+http://localhost:3000
+```
+
+Parar/remover:
+
+```bash
+docker stop monitor-linux
+docker rm monitor-linux
+```
+
+Verificar logs do container:
+
+```bash
+docker logs monitor-linux
+```
+
+## Kubernetes
+
+Manifests em `k8s/`:
+
+- `deployment.yaml`: 1 réplica, `livenessProbe` e `readinessProbe` em `/health`, variáveis de ambiente configuradas
+- `service.yaml`: Service `ClusterIP` na porta 80 apontando para a porta 3000 do container
+
+Validação local requer `kubectl` e um cluster ativo (Docker Desktop Kubernetes, Minikube ou Kind).
+
+Aplicar:
+
+```bash
 kubectl apply -f k8s/
 ```
 
----
-
-## 🌍 Variáveis de Ambiente
-
-Definidas no `.env` (não deve ser commitado em produção):
-
-| Variável | Padrão | Descrição |
-|---|---|---|
-| `PORT` | `3000` | Porta do servidor HTTP |
-| `RAM_THRESHOLD` | `80` | Limite de RAM (%) para alertas |
-| `MONITOR_INTERVAL` | `10` | Intervalo em segundos do script Shell |
-
----
-
-## 🚀 Como Rodar Localmente
-
-**Pré-requisito:** Node.js 20+
+Inspecionar:
 
 ```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Iniciar o servidor
-npm start
-
-# 3. Acessar no navegador
-# http://localhost:3000
+kubectl get pods
+kubectl get svc
+kubectl get deployments
 ```
 
-> ⚠️ As métricas exibidas são do sistema onde a aplicação estiver rodando. Para ver os dados do seu PC, rode localmente com `npm start`.
+Port-forward:
 
----
+```bash
+kubectl port-forward svc/monitor-linux 3000:80
+```
 
-## 📊 Critérios do Projeto Atendidos
+Acesso:
 
-| Critério | Implementação |
-|---|---|
-| Git / Git Flow | Branches `main`, `develop`, `feature/*`, Pull Requests |
-| Sistemas Operacionais Linux | Comandos `top`, `free`, `df`, `ps`, `uptime` + script Shell com logs e alertas |
-| Pipeline CI/CD | GitHub Actions com build, testes e smoke test Docker |
-| Docker | Dockerfile com imagem Alpine, build e execução containerizada |
-| Kubernetes | Deployment + Service + Liveness/Readiness Probes |
-| Testes Automatizados | 20 testes Jest/Supertest com ~93% de cobertura |
-| Organização e documentação | Estrutura clara de diretórios, variáveis de ambiente separadas, README completo |
+```text
+http://localhost:3000
+```
+
+Remover:
+
+```bash
+kubectl delete -f k8s/
+```
+
+## Endpoints da API
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| GET | `/health` | Health check — retorna `{ status: "ok" }` |
+| GET | `/api/metricas` | Todas as métricas: CPU, RAM, disco, processos, uptime |
+| GET | `/api/cpu` | Uso de CPU em percentual |
+| GET | `/api/ram` | Uso de RAM em MB e percentual |
+| GET | `/api/disco` | Uso de disco em `/` |
+
+## Comandos de Demonstração
+
+```bash
+# Git
+git branch -a
+git log --oneline --graph --decorate -n 10
+
+# Testes e validação
+npm ci
+sh -n scripts/monitoramento.sh
+npm test
+
+# Docker
+docker build -t monitor-linux .
+docker run -d -p 3000:3000 --name monitor-linux monitor-linux
+curl http://localhost:3000/health
+
+# Kubernetes
+kubectl apply -f k8s/
+kubectl get pods
+kubectl port-forward svc/monitor-linux 3000:80
+```
+
+## Melhorias Futuras
+
+- histórico de métricas com banco de dados (SQLite ou InfluxDB)
+- gráficos de série temporal no dashboard
+- script de backup automatizado com agendamento via cron
+- publicação de imagem em registry (Docker Hub ou GHCR)
+- deploy em cluster real (EKS, GKE ou DigitalOcean)
+- observabilidade com Prometheus e Grafana
+- alertas via webhook (Slack, e-mail)
+- suporte a múltiplos ambientes com Docker Compose
