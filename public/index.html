@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitor Linux</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-title">
+      <h1>🖥️ Monitor Linux</h1>
+      <p>Métricas do sistema em tempo real</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="cards-grid">
+
+      <div class="metric-card" id="card-cpu">
+        <div class="card-icon">⚙️</div>
+        <div class="card-body">
+          <h2>CPU</h2>
+          <div class="metric-value" id="cpu-value">—</div>
+          <div class="progress-bar"><div class="progress-fill" id="cpu-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="metric-card" id="card-ram">
+        <div class="card-icon">🧠</div>
+        <div class="card-body">
+          <h2>RAM</h2>
+          <div class="metric-value" id="ram-value">—</div>
+          <div class="metric-sub" id="ram-label">—</div>
+          <div class="progress-bar"><div class="progress-fill" id="ram-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="metric-card" id="card-disk">
+        <div class="card-icon">💾</div>
+        <div class="card-body">
+          <h2>Disco</h2>
+          <div class="metric-value" id="disk-value">—</div>
+          <div class="metric-sub" id="disk-label">—</div>
+          <div class="progress-bar"><div class="progress-fill" id="disk-bar"></div></div>
+        </div>
+      </div>
+
+      <div class="metric-card" id="card-proc">
+        <div class="card-icon">📋</div>
+        <div class="card-body">
+          <h2>Processos</h2>
+          <div class="metric-value" id="proc-value">—</div>
+          <div class="metric-sub">ativos no sistema</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-bar">
+      <span>⏱ Uptime: <strong id="uptime-value">—</strong></span>
+      <span>🕐 Última atualização: <strong id="last-update">—</strong></span>
+      <span id="status-badge" class="badge badge-ok">● Online</span>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

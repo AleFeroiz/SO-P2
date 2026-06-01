@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate shell script syntax
+        run: sh -n scripts/monitoramento.sh && echo "Shell script OK"
+
+      - name: Run tests
+        run: npm test
+
+  docker:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t monitor-linux .
+
+      - name: Smoke test container
+        run: |
+          docker run -d -p 3000:3000 --name monitor-test monitor-linux
+          sleep 3
+          curl -f http://localhost:3000/health
+          docker stop monitor-test

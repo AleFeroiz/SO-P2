@@ -1,0 +1,152 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #161b22, #1f2937);
+  border-bottom: 1px solid #30363d;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.header-title h1 {
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: #58a6ff;
+  text-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
+}
+
+.header-title p {
+  font-size: 1rem;
+  color: #8b949e;
+  margin-top: 0.3rem;
+}
+
+/* ── Container ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ── Cards Grid ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  padding: 1.4rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.metric-card:hover {
+  border-color: #58a6ff;
+  transform: translateY(-2px);
+}
+
+.metric-card.alert {
+  border-color: #f85149;
+  box-shadow: 0 0 12px rgba(248, 81, 73, 0.25);
+}
+
+.card-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-body h2 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #58a6ff;
+  line-height: 1.1;
+}
+
+.metric-sub {
+  font-size: 0.78rem;
+  color: #8b949e;
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Progress Bar ── */
+.progress-bar {
+  height: 6px;
+  background: #21262d;
+  border-radius: 3px;
+  margin-top: 0.6rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #238636;
+  transition: width 0.6s ease, background 0.4s ease;
+  width: 0%;
+}
+
+.progress-fill.medium { background: #d29922; }
+.progress-fill.high   { background: #f85149; }
+
+/* ── Info Bar ── */
+.info-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 0.85rem 1.25rem;
+  font-size: 0.85rem;
+  color: #8b949e;
+}
+
+.info-bar strong { color: #e6edf3; }
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.badge-ok    { background: rgba(35, 134, 54, 0.25); color: #3fb950; border: 1px solid #3fb950; }
+.badge-error { background: rgba(248, 81, 73, 0.25); color: #f85149; border: 1px solid #f85149; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .header-title h1 { font-size: 1.7rem; }
+  .cards-grid { grid-template-columns: 1fr 1fr; }
+  .info-bar { gap: 0.75rem; font-size: 0.78rem; }
+}

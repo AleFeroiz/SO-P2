@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: monitor-linux-service
+  name: monitor-linux
 spec:
   selector:
     app: monitor-linux
@@ -9,4 +9,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  type: NodePort
+  type: ClusterIP
